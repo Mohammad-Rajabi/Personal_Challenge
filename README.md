@@ -10,6 +10,7 @@ Technologies that are used in this projects are:
 
     Flutter
     Flutter Bloc
+    Clean Architecture
     Dependency Injection
     Webview
     
