@@ -24,9 +24,9 @@ Include internationalization & two theme
         <th style="text-align:center">Auth Screen | Sign up</th>
     </tr>
     <tr>
-        <td><img src="./screenshot/splash.png" alt="" width="200"></td>
-        <td><img src="./screenshot/login.png" alt="" width="200"></td>
-        <td><img src="./screenshot/register.png" alt="" width="200"></td>
+        <td><img src="./screenshots/splash.png" alt="" width="200"></td>
+        <td><img src="./screenshots/login.png" alt="" width="200"></td>
+        <td><img src="./screenshots/register.png" alt="" width="200"></td>
     <tr>
 </table>
 
@@ -38,10 +38,10 @@ Include internationalization & two theme
         <th style="text-align:center">Coins Screen | Paging</th>
     </tr>
     <tr>
-        <td><img src="./screenshot/loading.png" alt="" width="200"></td>
-        <td><img src="./screenshot/show_users.png" alt="" width="200"></td>
-        <td><img src="./screenshot/dark_theme.png" alt="" width="200"></td>
-        <td><img src="./screenshot/coin_paging.png" alt="" width="200"></td>
+        <td><img src="./screenshots/loading.png" alt="" width="200"></td>
+        <td><img src="./screenshots/show_users.png" alt="" width="200"></td>
+        <td><img src="./screenshots/dark_theme.png" alt="" width="200"></td>
+        <td><img src="./screenshots/coin_paging.png" alt="" width="200"></td>
     <tr>
 </table>
 
@@ -52,8 +52,8 @@ Include internationalization & two theme
         <th style="text-align:center">Webview Screen</th>
     </tr>
     <tr>
-        <td><img src="./screenshot/other_locale.png" alt="" width="200"></td>
-        <td><img src="./screenshot/profile.png" alt="" width="200"></td>
-        <td><img src="./screenshot/webview.jpg" alt="" width="200"></td>
+        <td><img src="./screenshots/other_locale.png" alt="" width="200"></td>
+        <td><img src="./screenshots/profile.png" alt="" width="200"></td>
+        <td><img src="./screenshots/webview.jpg" alt="" width="200"></td>
     <tr>
 </table>
