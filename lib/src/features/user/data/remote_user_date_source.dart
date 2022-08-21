@@ -1,6 +1,4 @@
-import 'package:dio/dio.dart';
 import 'package:finnogate_challenge/src/constants/http_constant.dart';
-import 'package:finnogate_challenge/src/features/auth/data/auth_data_source.dart';
 import 'package:finnogate_challenge/src/features/auth/domain/auth_api_response.dart';
 import 'package:finnogate_challenge/src/features/user/data/user_data_source.dart';
 import 'package:finnogate_challenge/src/features/user/domain/users_list_api_response/users_list_api_response.dart';

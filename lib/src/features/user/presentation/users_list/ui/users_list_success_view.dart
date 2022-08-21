@@ -19,40 +19,47 @@ class UsersListSuccessView extends StatefulWidget {
 class UsersListSuccessViewState extends State<UsersListSuccessView> {
   double itemExtent = 150;
 
-  late UsersListSuccess state;
+  late UsersListSuccessState state;
 
   final ScrollController _listScrollController = ScrollController();
 
   @override
   void initState() {
-    _listScrollController.addListener(_onScroll);
     super.initState();
+
+    _listScrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _listScrollController
+        .animateTo(context.read<UsersListBloc>().usersListScrollOffset,
+            duration: const Duration(milliseconds: 10), curve: Curves.elasticIn));
   }
 
   void _onScroll() {
-    if (_listScrollController.position.extentAfter <= 200) {
-      context.read<UsersListBloc>().add(UsersListFetchMore(
-          currentPage: state.data.page!,
-          hasReachedMax: state.data.page! == state.data.totalPages,
+    if (_listScrollController.position.atEdge &&
+        _listScrollController.position.pixels != 0) {
+      context.read<UsersListBloc>().add(UsersListFetchMoreEvent(
+          currentPage: state.currentPage,
+          hasReachedMax: state.hasReachedMax,
           isUsersFetching: state.isUsersFetching));
     }
+
+    context.read<UsersListBloc>().add(UsersListSaveScrollOffsetEvent(
+        scrollOffset: _listScrollController.offset));
   }
 
   @override
   Widget build(BuildContext context) {
-    state = (context.read<UsersListBloc>().state as UsersListSuccess);
+    state = (context.read<UsersListBloc>().state) as UsersListSuccessState;
+
     return SizedBox(
-      height: itemExtent * state.data.users.length,
+      height: itemExtent * state.users.length,
       child: ListView.builder(
-          itemCount: state.hasReachedMax
-              ? state.data.users.length
-              : state.data.users.length + 1,
-          itemExtent: itemExtent,
+          itemCount:
+              state.hasReachedMax ? state.users.length : state.users.length + 1,
           controller: _listScrollController,
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
-            if (index >= state.data.users.length) return const BottomLoading();
-            var user = state.data.users[index];
+            if (index >= state.users.length) return const BottomLoading();
+            var user = state.users[index];
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
               decoration: BoxDecoration(
@@ -64,9 +71,8 @@ class UsersListSuccessViewState extends State<UsersListSuccessView> {
               child: InkWell(
                 borderRadius: BorderRadius.circular(16),
                 onTap: () {
-                  context
-                      .read<UsersListBloc>()
-                      .add(UsersListNavigateToUserProfileScreen(user: user));
+                  context.read<UsersListBloc>().add(
+                      UsersListNavigateToUserProfileScreenEvent(user: user));
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,

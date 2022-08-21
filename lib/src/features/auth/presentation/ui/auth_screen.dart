@@ -16,6 +16,7 @@ class AuthScreen extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _passwordConfirmationController =
       TextEditingController();
+
   late ThemeData themeData;
   late AppLocalizations localizations;
 
@@ -29,26 +30,29 @@ class AuthScreen extends StatelessWidget {
       child: Scaffold(
         body: BlocConsumer<AuthBloc, AuthState>(
           buildWhen: (previous, current) {
-            if (current is AuthInitial) {
+            if (current is AuthInitialState) {
               return true;
             } else {
               return false;
             }
           },
           listener: (context, state) {
-            if (state is AuthNoInternet) {
+            if (state is AuthNoInternetState) {
               showSnackBar(context, localizations.noInternet);
             }
-            if (state is AuthFailure) {
+            if (state is AuthFailureState) {
               showSnackBar(context, state.message);
             }
-            if (state is AuthSuccess) {
+            if (state is AuthSuccessState) {
               _emailController.clear();
               _passwordController.clear();
               _passwordConfirmationController.clear();
+              // _emailFocusNode.dispose();
+              // _passwordFocusNode.dispose();
+              // _passwordConfirmationFocusNode.dispose();
               _navigateToMainScreen(context);
             }
-            if (state is AuthNoRulesAccepted) {
+            if (state is AutRulesNotAcceptedState) {
               showSnackBar(context, localizations.no_rules_accepted);
             }
           },
@@ -57,7 +61,7 @@ class AuthScreen extends StatelessWidget {
               child: Container(
                 margin:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-                child: (state as AuthInitial).authStateMode ==
+                child: (state as AuthInitialState).authStateMode ==
                         AuthStateMode.register
                     ? _RegisterStateWidget(
                         themeData: themeData,
@@ -140,6 +144,7 @@ class _LoginStateWidget extends StatelessWidget {
                       return emailValidator(value, _localizations);
                     },
                     controller: _emailController,
+                    // focusNode: _emailFocusNode,
                     keyboardType: TextInputType.emailAddress,
                     label: _localizations.email),
                 const SizedBox(
@@ -150,11 +155,12 @@ class _LoginStateWidget extends StatelessWidget {
                       return passwordValidator(value, _localizations);
                     },
                     controller: _passwordController,
-                    obscureText: (state as AuthInitial).isPasswordObscure,
+                    // focusNode: _passwordFocusNode,
+                    obscureText: (state as AuthInitialState).isPasswordObscure,
                     suffixIcon: IconButton(
                       splashRadius: 24,
                       onPressed: () {
-                        context.read<AuthBloc>().add(AuthObscurePasswordChanged(
+                        context.read<AuthBloc>().add(AuthObscurePasswordChangedEvent(
                             obscurePassword: state.isPasswordObscure));
                       },
                       icon: Icon(
@@ -179,7 +185,7 @@ class _LoginStateWidget extends StatelessWidget {
                 onChanged: (bool? value) {
                   context
                       .read<AuthBloc>()
-                      .add(AuthRememberMe(rememberMe: value!));
+                      .add(AuthRememberMeEvent(rememberMe: value!));
                 },
               ),
               Text(
@@ -198,7 +204,7 @@ class _LoginStateWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             voidCallback: () {
-              context.read<AuthBloc>().add(AuthRequested(
+              context.read<AuthBloc>().add(AuthRequestedEvent(
                   formKey: _formKey,
                   email: _emailController.text.trim(),
                   password: _passwordController.text,
@@ -239,7 +245,8 @@ class _LoginStateWidget extends StatelessWidget {
                 ),
                 TextButton(
                     onPressed: () {
-                      context.read<AuthBloc>().add(AuthStateModeChanged(
+                      _formKey.currentState!.reset();
+                      context.read<AuthBloc>().add(AuthStateModeChangedEvent(
                           authStateMode: AuthStateMode.login));
                     },
                     child: Text(
@@ -320,11 +327,12 @@ class _RegisterStateWidget extends StatelessWidget {
                       return passwordValidator(value, _localizations);
                     },
                     controller: _passwordController,
-                    obscureText: (state as AuthInitial).isPasswordObscure,
+                    obscureText: (state as AuthInitialState).isPasswordObscure,
                     suffixIcon: IconButton(
                       splashRadius: 24,
                       onPressed: () {
-                        context.read<AuthBloc>().add(AuthObscurePasswordChanged(
+                        _formKey.currentState!.reset();
+                        context.read<AuthBloc>().add(AuthObscurePasswordChangedEvent(
                             obscurePassword: state.isPasswordObscure));
                       },
                       icon: Icon(
@@ -347,7 +355,7 @@ class _RegisterStateWidget extends StatelessWidget {
                       splashRadius: 24,
                       onPressed: () {
                         context.read<AuthBloc>().add(
-                            AuthObscureConfirmationPasswordChanged(
+                            AuthObscureConfirmationPasswordChangedEvent(
                                 obscureConfirmationPassword:
                                     state.isConfirmationPasswordObscure));
                       },
@@ -375,7 +383,7 @@ class _RegisterStateWidget extends StatelessWidget {
                 onChanged: (bool? value) {
                   context
                       .read<AuthBloc>()
-                      .add(AuthRulesAccepted(isRulesAccepted: value!));
+                      .add(AuthRulesAcceptedEvent(isRulesAccepted: value!));
                 },
               ),
               RichText(
@@ -404,7 +412,7 @@ class _RegisterStateWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             voidCallback: () {
-              context.read<AuthBloc>().add(AuthRequested(
+              context.read<AuthBloc>().add(AuthRequestedEvent(
                   formKey: _formKey,
                   email: _emailController.text.trim(),
                   password: _passwordController.text,
@@ -445,7 +453,7 @@ class _RegisterStateWidget extends StatelessWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    context.read<AuthBloc>().add(AuthStateModeChanged(
+                    context.read<AuthBloc>().add(AuthStateModeChangedEvent(
                         authStateMode: state.authStateMode));
                   },
                   child: Text(

@@ -2,43 +2,43 @@ part of 'auth_bloc.dart';
 
 abstract class AuthEvent {}
 
-class AuthStateModeChanged extends AuthEvent {
+class AuthStateModeChangedEvent extends AuthEvent {
   AuthStateMode authStateMode;
-  AuthStateModeChanged({required this.authStateMode});
+  AuthStateModeChangedEvent({required this.authStateMode});
 }
 
-class AuthRequested extends AuthEvent {
+class AuthRequestedEvent extends AuthEvent {
   GlobalKey<FormState> formKey;
   String email;
   String password;
   AppLocalizations localizations;
 
-  AuthRequested({required this.formKey,required this.email,required this.password,required this.localizations});
+  AuthRequestedEvent({required this.formKey,required this.email,required this.password,required this.localizations});
 }
 
-class AuthNavigateToEvent extends AuthEvent {}
+class AuthNavigateToMainScreenEvent extends AuthEvent {}
 
-class AuthObscurePasswordChanged extends AuthEvent {
+class AuthObscurePasswordChangedEvent extends AuthEvent {
   bool obscurePassword;
 
-  AuthObscurePasswordChanged({required this.obscurePassword});
+  AuthObscurePasswordChangedEvent({required this.obscurePassword});
 }
 
-class AuthObscureConfirmationPasswordChanged extends AuthEvent {
+class AuthObscureConfirmationPasswordChangedEvent extends AuthEvent {
   bool obscureConfirmationPassword;
 
-  AuthObscureConfirmationPasswordChanged(
+  AuthObscureConfirmationPasswordChangedEvent(
       {required this.obscureConfirmationPassword});
 }
 
-class AuthRulesAccepted extends AuthEvent {
+class AuthRulesAcceptedEvent extends AuthEvent {
   bool isRulesAccepted;
 
-  AuthRulesAccepted({required this.isRulesAccepted});
+  AuthRulesAcceptedEvent({required this.isRulesAccepted});
 }
 
-class AuthRememberMe extends AuthEvent {
+class AuthRememberMeEvent extends AuthEvent {
   bool rememberMe;
 
-  AuthRememberMe({required this.rememberMe});
+  AuthRememberMeEvent({required this.rememberMe});
 }

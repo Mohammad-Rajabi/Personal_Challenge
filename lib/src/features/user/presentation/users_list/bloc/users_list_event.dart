@@ -5,20 +5,29 @@ abstract class UsersListEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class UsersListStarted extends UsersListEvent {}
+class UsersListStartedEvent extends UsersListEvent {}
 
-class UsersListRetry extends UsersListEvent {}
+class UsersListRetryEvent extends UsersListEvent {}
 
-class UsersListFetchMore extends UsersListEvent {
+class UsersListFetchMoreEvent extends UsersListEvent {
   bool hasReachedMax;
   int currentPage;
   bool isUsersFetching;
 
-  UsersListFetchMore({required this.hasReachedMax,required this.currentPage,required this.isUsersFetching});
+  UsersListFetchMoreEvent(
+      {required this.hasReachedMax,
+      required this.currentPage,
+      required this.isUsersFetching});
 }
 
-class UsersListNavigateToUserProfileScreen extends UsersListEvent {
+class UsersListNavigateToUserProfileScreenEvent extends UsersListEvent {
   UserModel user;
 
-  UsersListNavigateToUserProfileScreen({required this.user});
+  UsersListNavigateToUserProfileScreenEvent({required this.user});
+}
+
+class UsersListSaveScrollOffsetEvent extends UsersListEvent {
+  double scrollOffset;
+
+  UsersListSaveScrollOffsetEvent({required this.scrollOffset});
 }

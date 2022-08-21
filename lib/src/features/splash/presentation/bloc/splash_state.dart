@@ -6,4 +6,4 @@ class SplashState extends Equatable{
   List<Object> get props =>[];
 }
 
-class SplashNavigated extends SplashState{}
+class SplashNavigatedToAuthScreenState extends SplashState{}

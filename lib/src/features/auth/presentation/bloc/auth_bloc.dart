@@ -18,106 +18,106 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   RemoteAuthDataSource remoteAuthDataSource;
 
-  AuthBloc({required this.remoteAuthDataSource}) : super(AuthInitial()) {
-    on<AuthNavigateToEvent>(_onNavigate);
-    on<AuthRequested>(_onRequested);
-    on<AuthObscurePasswordChanged>(_onObscurePasswordChanged);
-    on<AuthObscureConfirmationPasswordChanged>(
+  AuthBloc({required this.remoteAuthDataSource}) : super(AuthInitialState()) {
+    on<AuthNavigateToMainScreenEvent>(_onNavigate);
+    on<AuthRequestedEvent>(_onRequested);
+    on<AuthObscurePasswordChangedEvent>(_onObscurePasswordChanged);
+    on<AuthObscureConfirmationPasswordChangedEvent>(
         _onObscureConfirmationPasswordChanged);
-    on<AuthRulesAccepted>(_onRulesAccepted);
-    on<AuthRememberMe>(_onRememberMe);
-    on<AuthStateModeChanged>(_onAuthStateModeChanged);
+    on<AuthRulesAcceptedEvent>(_onRulesAccepted);
+    on<AuthRememberMeEvent>(_onRememberMe);
+    on<AuthStateModeChangedEvent>(_onAuthStateModeChanged);
   }
 
-  _onNavigate(AuthNavigateToEvent event, Emitter<AuthState> emit) {}
+  _onNavigate(AuthNavigateToMainScreenEvent event, Emitter<AuthState> emit) {}
 
-  _onRequested(AuthRequested event, Emitter<AuthState> emit) async {
+  _onRequested(AuthRequestedEvent event, Emitter<AuthState> emit) async {
     if (event.formKey.currentState!.validate()) {
-      emit((state as AuthInitial).copyWith(isLoading: true));
+      emit((state as AuthInitialState).copyWith(isLoading: true));
 
-      if ((state as AuthInitial).authStateMode == AuthStateMode.login) {
+      if ((state as AuthInitialState).authStateMode == AuthStateMode.login) {
         await _login(event, emit);
       } else {
-        if ((state as AuthInitial).isRulesAccepted) {
+        if ((state as AuthInitialState).isRulesAccepted) {
           await _register(event, emit);
         }
         else {
-          emit(AuthNoRulesAccepted());
-          emit(AuthInitial(
+          emit(AutRulesNotAcceptedState());
+          emit(AuthInitialState(
               isLoading: false, authStateMode: AuthStateMode.register));
         }
       }
     }
   }
 
-  Future<void> _login(AuthRequested event, Emitter<AuthState> emit) async {
+  Future<void> _login(AuthRequestedEvent event, Emitter<AuthState> emit) async {
     try {
       await remoteAuthDataSource.login(
           email: event.email, password: event.password);
-      emit(AuthSuccess());
+      emit(AuthSuccessState());
     } on DioError catch (dioError) {
       if (dioError.type == DioErrorType.other &&
           dioError.error is NoInternetException) {
-        emit(AuthNoInternet());
+        emit(AuthNoInternetState());
       } else {
-        emit(AuthFailure(message: event.localizations.user_not_found));
+        emit(AuthFailureState(message: event.localizations.user_not_found));
       }
     } catch (e) {
-      emit(AuthFailure(message: event.localizations.exception));
+      emit(AuthFailureState(message: event.localizations.exception));
     } finally {
-      emit(AuthInitial(
+      emit(AuthInitialState(
           isLoading: false, authStateMode: AuthStateMode.login));
     }
   }
 
-  Future<void> _register(AuthRequested event, Emitter<AuthState> emit) async {
+  Future<void> _register(AuthRequestedEvent event, Emitter<AuthState> emit) async {
     try {
       await remoteAuthDataSource.register(
           email: event.email, password: event.password);
-      emit(AuthSuccess());
+      emit(AuthSuccessState());
     } on DioError catch (dioError) {
       if (dioError.type == DioErrorType.other &&
           dioError.error is NoInternetException) {
-        emit(AuthNoInternet());
+        emit(AuthNoInternetState());
       } else {
-        emit(AuthFailure(message: event.localizations.register_error));
+        emit(AuthFailureState(message: event.localizations.register_error));
       }
     } catch (e) {
-      emit(AuthFailure(message: event.localizations.exception));
+      emit(AuthFailureState(message: event.localizations.exception));
     } finally {
-      emit(AuthInitial(
+      emit(AuthInitialState(
           isLoading: false, authStateMode: AuthStateMode.register,isRulesAccepted: true));
     }
   }
 
   _onObscurePasswordChanged(
-      AuthObscurePasswordChanged event, Emitter<AuthState> emit) {
-    emit((state as AuthInitial).copyWith(
+      AuthObscurePasswordChangedEvent event, Emitter<AuthState> emit) {
+    emit((state as AuthInitialState).copyWith(
       isPasswordObscure: !event.obscurePassword,
     ));
   }
 
   _onObscureConfirmationPasswordChanged(
-      AuthObscureConfirmationPasswordChanged event, Emitter<AuthState> emit) {
-    emit((state as AuthInitial).copyWith(
+      AuthObscureConfirmationPasswordChangedEvent event, Emitter<AuthState> emit) {
+    emit((state as AuthInitialState).copyWith(
       isConfirmationPasswordObscure: !event.obscureConfirmationPassword,
     ));
   }
 
-  _onRulesAccepted(AuthRulesAccepted event, Emitter<AuthState> emit) {
-    emit((state as AuthInitial)
+  _onRulesAccepted(AuthRulesAcceptedEvent event, Emitter<AuthState> emit) {
+    emit((state as AuthInitialState)
         .copyWith(isRulesAccepted: event.isRulesAccepted));
   }
 
-  _onAuthStateModeChanged(AuthStateModeChanged event, Emitter<AuthState> emit) {
-    emit((state as AuthInitial).copyWith(
+  _onAuthStateModeChanged(AuthStateModeChangedEvent event, Emitter<AuthState> emit) {
+    emit((state as AuthInitialState).copyWith(
         authStateMode: event.authStateMode == AuthStateMode.register
             ? AuthStateMode.login
             : AuthStateMode.register));
   }
 
-   _onRememberMe(AuthRememberMe event, Emitter<AuthState> emit) {
-     emit((state as AuthInitial)
+   _onRememberMe(AuthRememberMeEvent event, Emitter<AuthState> emit) {
+     emit((state as AuthInitialState)
          .copyWith(rememberMe: event.rememberMe));
   }
 }

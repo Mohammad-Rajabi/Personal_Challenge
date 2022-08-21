@@ -23,8 +23,9 @@ class AppRoutes {
       case kAuthScreenRoute:
         route = MaterialPageRoute(builder: (_) => AuthScreen());
         break;
-        case kWebViewScreenRoute:
-        route = MaterialPageRoute(builder: (_) => WebViewScreen(url: (settings.arguments) as String));
+      case kWebViewScreenRoute:
+        route = MaterialPageRoute(
+            builder: (_) => WebViewScreen(url: (settings.arguments) as String));
         break;
       case kUserProfileScreenRoute:
         route = MaterialPageRoute(
@@ -34,14 +35,19 @@ class AppRoutes {
         );
         break;
       case kDashboardScreenRoute:
-        route = MaterialPageRoute(builder: (_) => Offstage(offstage:((settings.arguments) as Map<String,dynamic>)['offStage'],child: DashboardScreen(),));
+        route = MaterialPageRoute(
+            builder: (_) => Offstage(
+                  offstage: ((settings.arguments)
+                      as Map<String, dynamic>)['offStage'],
+                  child: DashboardScreen(),
+                ));
         break;
       case kUsersListScreenRoute:
         route = MaterialPageRoute(
           builder: (_) => Offstage(
             offstage:
                 ((settings.arguments) as Map<String, dynamic>)['offStage'],
-            child: UsersListScreen(),
+            child: const UsersListScreen(key: PageStorageKey('users list'),),
           ),
         );
         break;

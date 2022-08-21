@@ -1,44 +1,46 @@
 part of 'dashboard_bloc.dart';
 
-
-abstract class DashboardState extends Equatable{
-
+abstract class DashboardState extends Equatable {
   @override
-  List<Object> get props=>[];
+  List<Object> get props => [];
 }
 
-class DashboardLoading extends DashboardState {}
+class DashboardLoadingState extends DashboardState {}
 
-class DashboardNoInternet extends DashboardState {}
+class DashboardNoInternetState extends DashboardState {}
 
-class DashboardFailure extends DashboardState {}
+class DashboardFailureState extends DashboardState {}
 
-class DashboardSuccess extends DashboardState {
+class DashboardSuccessState extends DashboardState {
   List<CoinModel> coins;
   bool hasReachedMax;
   bool isCoinsFetching;
   int currentPage;
 
-  DashboardSuccess({required this.coins,required this.currentPage,this.hasReachedMax = false,this.isCoinsFetching=false});
+  DashboardSuccessState(
+      {required this.coins,
+      required this.currentPage,
+      this.hasReachedMax = false,
+      this.isCoinsFetching = false});
 
-  DashboardSuccess copyWith({
-    List<CoinModel>? coins,
-    bool? hasReachedMax,
-    int? currentPage
-  }) {
-    return DashboardSuccess(
-      coins: coins ?? this.coins,
-      currentPage: currentPage?? this.currentPage,
-      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
-    );
+  DashboardSuccessState copyWith(
+      {List<CoinModel>? coins,
+      bool? hasReachedMax,
+      bool? isCoinsFetching,
+      int? currentPage}) {
+    return DashboardSuccessState(
+        coins: coins ?? this.coins,
+        currentPage: currentPage ?? this.currentPage,
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+        isCoinsFetching: isCoinsFetching ?? this.isCoinsFetching);
   }
+
   @override
-  List<Object> get props=>[coins,hasReachedMax,currentPage];
+  List<Object> get props => [coins, hasReachedMax, currentPage];
 }
 
-class DashboardShowWebView extends DashboardState{
-String url;
-  DashboardShowWebView({required this.url});
+class DashboardNavigatedToWebViewScreenState extends DashboardState {
+  String url;
+
+  DashboardNavigatedToWebViewScreenState({required this.url});
 }
-
-

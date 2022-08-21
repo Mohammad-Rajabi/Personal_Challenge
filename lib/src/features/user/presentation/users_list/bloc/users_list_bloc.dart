@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:finnogate_challenge/src/features/user/data/remote_user_date_source.dart';
 import 'package:finnogate_challenge/src/features/user/domain/user_model/user_model.dart';
-import 'package:finnogate_challenge/src/features/user/domain/users_list_api_response/users_list_api_response.dart';
 import 'package:finnogate_challenge/src/exceptions/NoInternetException.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -14,59 +11,76 @@ part 'users_list_state.dart';
 
 class UsersListBloc extends Bloc<UsersListEvent, UsersListState> {
   RemoteUserDataSource _remoteUserDataSource;
-  late List<UserModel> currentUsers;
   int currentPage = 1;
+  late List<UserModel> users;
+  bool isPreviousRendered = false;
+   double usersListScrollOffset = 0;
 
   UsersListBloc({required RemoteUserDataSource remoteUserDataSource})
       : _remoteUserDataSource = remoteUserDataSource,
-        super(UsersListLoading()) {
-    on<UsersListStarted>(_onStarted);
-    on<UsersListRetry>(_onRetry);
-    on<UsersListNavigateToUserProfileScreen>(_onNavigatedTo);
-    on<UsersListFetchMore>(_onFetchUsersMore);
+        super(UsersListLoadingState()) {
+    on<UsersListStartedEvent>(_onStarted);
+    on<UsersListRetryEvent>(_onRetry);
+    on<UsersListNavigateToUserProfileScreenEvent>(_onNavigatedTo);
+    on<UsersListFetchMoreEvent>(_onFetchUsersMore);
+    on<UsersListSaveScrollOffsetEvent>(_onSaveScrollOffset);
   }
 
-  _onStarted(UsersListStarted event, Emitter<UsersListState> emit) async {
-    try {
-      final usersListApiResponse =
-          await _remoteUserDataSource.getUsers(currentPage);
-      currentUsers = List.from(usersListApiResponse.users,growable: true);
-      emit(UsersListSuccess(data: usersListApiResponse));
-    } on DioError catch (dioError) {
-      if (dioError.type == DioErrorType.other &&
-          dioError.error is NoInternetException) {
-        emit(UsersListNoInternet());
-      } else {
-        emit(UsersListFailure());
+  _onStarted(UsersListStartedEvent event, Emitter<UsersListState> emit) async {
+    if (!isPreviousRendered) {
+      isPreviousRendered= true;
+      try {
+        final usersListApiResponse =
+            await _remoteUserDataSource.getUsers(currentPage);
+        users = List.from(usersListApiResponse.users, growable: true);
+        emit(UsersListSuccessState(
+            users: List.from(usersListApiResponse.users, growable: true),
+            currentPage: currentPage));
+      } on DioError catch (dioError) {
+        if (dioError.type == DioErrorType.other &&
+            dioError.error is NoInternetException) {
+          emit(UsersListNoInternetState());
+        } else {
+          emit(UsersListFailureState());
+        }
+      } catch (e) {
+        emit(UsersListFailureState());
       }
-    } catch (e) {
-      emit(UsersListFailure());
     }
   }
 
-  _onRetry(UsersListRetry event, Emitter<UsersListState> emit) {
-    add(UsersListStarted());
+  _onRetry(UsersListRetryEvent event, Emitter<UsersListState> emit) {
+    add(UsersListStartedEvent());
   }
 
-  _onNavigatedTo(UsersListNavigateToUserProfileScreen event,
+  _onNavigatedTo(UsersListNavigateToUserProfileScreenEvent event,
       Emitter<UsersListState> emit) {
-    emit(UsersListNavigatedToUserProfileScreen(user: event.user));
+    emit(UsersListNavigatedToUserProfileScreenState(user: event.user));
   }
 
   _onFetchUsersMore(
-      UsersListFetchMore event, Emitter<UsersListState> emit) async {
+      UsersListFetchMoreEvent event, Emitter<UsersListState> emit) async {
     if (!event.hasReachedMax && !event.isUsersFetching) {
+      emit(UsersListSuccessState(
+          users: users, currentPage: currentPage, isUsersFetching: true));
+      currentPage = event.currentPage + 1;
+
       final usersListApiResponse =
-          await _remoteUserDataSource.getUsers(event.currentPage + 1);
-      currentUsers.addAll(usersListApiResponse.users);
-      if (usersListApiResponse.page == usersListApiResponse.totalPages) {
-        emit(UsersListSuccess(
-            data: usersListApiResponse.copyWith(users: currentUsers),
-            hasReachedMax: true));
-      } else {
-        emit(UsersListSuccess(
-            data: usersListApiResponse.copyWith(users: currentUsers)));
-      }
+          await _remoteUserDataSource.getUsers(currentPage);
+
+      users.addAll(usersListApiResponse.users);
+
+      emit(UsersListSuccessState(
+        users: users,
+        currentPage: currentPage,
+        hasReachedMax:
+            (usersListApiResponse.page == usersListApiResponse.totalPages),
+        isUsersFetching: false,
+      ));
     }
+  }
+
+   _onSaveScrollOffset(UsersListSaveScrollOffsetEvent event, Emitter<UsersListState> emit) {
+      usersListScrollOffset = event.scrollOffset;
   }
 }

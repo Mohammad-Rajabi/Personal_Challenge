@@ -22,7 +22,7 @@ class DashboardSuccessView extends StatefulWidget {
 class DashboardSuccessViewState extends State<DashboardSuccessView> {
   late ThemeData themeData;
   late AppLocalizations localizations;
-  late DashboardSuccess state;
+  late DashboardSuccessState state;
   double itemExtent = 70;
   final formatter = intl.NumberFormat("#,##0.0######");
   final percentageFormat = intl.NumberFormat("##0.0##");
@@ -42,8 +42,8 @@ class DashboardSuccessViewState extends State<DashboardSuccessView> {
   }
 
   void _onScroll() {
-    if (_listScrollController.position.extentAfter <= 200) {
-      context.read<DashboardBloc>().add(DashboardCoinsFetchMore(
+    if (_listScrollController.position.atEdge && _listScrollController.position.pixels !=0) {
+      context.read<DashboardBloc>().add(DashboardCoinsFetchMoreEvent(
           hasReachedMax: state.hasReachedMax,
           currentPage: state.currentPage,
           isCoinsFetching: state.isCoinsFetching));
@@ -52,7 +52,7 @@ class DashboardSuccessViewState extends State<DashboardSuccessView> {
 
   @override
   Widget build(BuildContext context) {
-    state = (context.read<DashboardBloc>().state as DashboardSuccess);
+    state = (context.read<DashboardBloc>().state as DashboardSuccessState);
 
     return SizedBox(
       height: itemExtent * state.coins.length,
@@ -69,7 +69,7 @@ class DashboardSuccessViewState extends State<DashboardSuccessView> {
               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: InkWell(
                 onTap: () {
-                  context.read<DashboardBloc>().add(DashboardOnCoinClicked(
+                  context.read<DashboardBloc>().add(DashboardOnCoinClickedEvent(
                       url: 'https://www.tradingview.com/symbols/BTCUSD/'));
                 },
                 child: Row(

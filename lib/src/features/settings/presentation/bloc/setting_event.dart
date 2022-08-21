@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:finnogate_challenge/src/themeing/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class SettingEvent extends Equatable{
@@ -8,18 +7,18 @@ class SettingEvent extends Equatable{
 
 }
 
-class ThemeChanged extends SettingEvent{
+class ThemeChangedEvent extends SettingEvent{
   final ThemeData themeData;
 
-  ThemeChanged({
+  ThemeChangedEvent({
     required this.themeData,
   });
 }
 
-class LocalChanged extends SettingEvent{
+class LocalChangedEvent extends SettingEvent{
   final Locale locale;
 
-  LocalChanged({
+  LocalChangedEvent({
     required this.locale,
   });
 }

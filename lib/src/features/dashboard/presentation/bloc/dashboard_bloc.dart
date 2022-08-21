@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:finnogate_challenge/src/exceptions/NoInternetException.dart';
@@ -13,54 +11,63 @@ part 'dashboard_state.dart';
 
 class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   RemoteCoinsDataSource _remoteCoinsDataSource;
-  late List<CoinModel> currentCoins;
   int currentPage = 1;
   final int perPage = 15;
+  late List<CoinModel> coins;
 
   DashboardBloc({required RemoteCoinsDataSource remoteCoinsDataSource})
       : _remoteCoinsDataSource = remoteCoinsDataSource,
-        super(DashboardLoading()) {
-    on<DashboardStarted>(_onStarted);
-    on<DashboardRetry>(_onRetry);
-    on<DashboardCoinsFetchMore>(_onFetchCoinsMore);
-    on<DashboardOnCoinClicked>(_onCoinClicked);
+        super(DashboardLoadingState()) {
+    on<DashboardStartedEvent>(_onStarted);
+    on<DashboardRetryEvent>(_onRetry);
+    on<DashboardCoinsFetchMoreEvent>(_onFetchCoinsMore);
+    on<DashboardOnCoinClickedEvent>(_onCoinClicked);
   }
 
-  _onStarted(DashboardStarted event, Emitter<DashboardState> emit) async {
+  _onStarted(DashboardStartedEvent event, Emitter<DashboardState> emit) async {
     try {
       final coinsResponse = await _remoteCoinsDataSource.getCoins(
           page: currentPage, perPage: perPage);
-      currentCoins = List.from(coinsResponse,growable: true);
-      emit(DashboardSuccess(coins: currentCoins,currentPage:currentPage));
+      coins = List.from(coinsResponse, growable: true);
+      emit(DashboardSuccessState(
+          coins: List.from(coinsResponse, growable: true),
+          currentPage: currentPage));
     } on DioError catch (dioError) {
       if (dioError.type == DioErrorType.other &&
           dioError.error is NoInternetException) {
-        emit(DashboardNoInternet());
+        emit(DashboardNoInternetState());
       } else {
-        emit(DashboardFailure());
+        emit(DashboardFailureState());
       }
     } catch (e) {
-      emit(DashboardFailure());
+      emit(DashboardFailureState());
     }
   }
 
-  _onRetry(DashboardRetry event, Emitter<DashboardState> emit) {
-    add(DashboardStarted());
+  _onRetry(DashboardRetryEvent event, Emitter<DashboardState> emit) {
+    add(DashboardStartedEvent());
   }
 
   _onFetchCoinsMore(
-      DashboardCoinsFetchMore event, Emitter<DashboardState> emit) async {
+      DashboardCoinsFetchMoreEvent event, Emitter<DashboardState> emit) async {
     if (!event.hasReachedMax && !event.isCoinsFetching) {
+      emit(DashboardSuccessState(
+          coins: this.coins, currentPage: currentPage, isCoinsFetching: true));
+
       currentPage = event.currentPage + 1;
+
       final coins = await _remoteCoinsDataSource.getCoins(
           page: currentPage, perPage: perPage);
-      currentCoins.addAll(coins);
 
-      emit(DashboardSuccess(coins: currentCoins,currentPage: currentPage));
+      this.coins.addAll(coins);
+
+      emit(DashboardSuccessState(
+          coins: this.coins, currentPage: currentPage, isCoinsFetching: false));
     }
   }
 
-   _onCoinClicked(DashboardOnCoinClicked event, Emitter<DashboardState> emit) {
-    emit(DashboardShowWebView(url: event.url));
+  _onCoinClicked(
+      DashboardOnCoinClickedEvent event, Emitter<DashboardState> emit) {
+    emit(DashboardNavigatedToWebViewScreenState(url: event.url));
   }
 }

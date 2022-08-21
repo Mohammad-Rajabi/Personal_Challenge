@@ -21,66 +21,64 @@ class DashboardScreen extends StatelessWidget {
 
     return BlocProvider.value(
       value: RepositoryProvider.of<DashboardBloc>(context)
-        ..add(DashboardStarted()),
+        ..add(DashboardStartedEvent()),
       child: Scaffold(
         appBar: AppBar(
-          title: Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const SizedBox(
-                  width: 16,
-                ),
-                Text(
-                  localizations.coin_name,
-                  style: themeData.textTheme.subtitle2,
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Text(
-                  localizations.current_price,
-                  style: themeData.textTheme.subtitle2,
-                ),
-
-                Text(
-                  localizations.price_change_24h,
-                  style: themeData.textTheme.subtitle2,
-                )
-              ],
-            ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const SizedBox(
+                width: 16,
+              ),
+              Text(
+                localizations.coin_name,
+                style: themeData.textTheme.subtitle2,
+              ),
+              const SizedBox(
+                width: 16,
+              ),
+              Text(
+                localizations.current_price,
+                style: themeData.textTheme.subtitle2,
+              ),
+              Text(
+                localizations.price_change_24h,
+                style: themeData.textTheme.subtitle2,
+              )
+            ],
           ),
           centerTitle: true,
         ),
         body: BlocConsumer<DashboardBloc, DashboardState>(
           buildWhen: (previous, current) {
-            if (current is DashboardShowWebView) {
+            if (current is DashboardNavigatedToWebViewScreenState ||
+                (current is DashboardSuccessState && current.isCoinsFetching)) {
               return false;
             } else {
               return true;
             }
           },
           listener: (context, state) {
-            if (state is DashboardShowWebView) {
+            if (state is DashboardNavigatedToWebViewScreenState) {
               _navigateToWebViewScreen(context, state.url);
             }
           },
           builder: (context, state) {
-            if (state is DashboardSuccess) {
+            if (state is DashboardSuccessState) {
               if (state.coins.isNotEmpty) {
                 return DashboardSuccessView(themeData: themeData);
               }
             }
-            if (state is DashboardFailure) {
+            if (state is DashboardFailureState) {
               return FailureStateView(
                   themeData: themeData, localizations: localizations);
             }
-            if (state is DashboardNoInternet) {
+            if (state is DashboardNoInternetState) {
               return NoInternetView(
                 themeData: themeData,
                 localizations: localizations,
                 callback: () {
-                  context.read<DashboardBloc>().add(DashboardRetry());
+                  context.read<DashboardBloc>().add(DashboardRetryEvent());
                 },
               );
             } else {

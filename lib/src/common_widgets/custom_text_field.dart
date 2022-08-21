@@ -47,7 +47,6 @@ class CustomTextField extends StatelessWidget {
       focusNode: focusNode,
       onEditingComplete: onEditingComplete,
       onFieldSubmitted: onFieldSubmitted,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
       keyboardType: keyboardType,
       validator: validator,
       controller: controller,

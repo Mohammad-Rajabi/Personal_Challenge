@@ -12,12 +12,12 @@ class SettingBloc extends Bloc<SettingEvent, SettingsState> {
   SettingBloc()
       : super(SettingsState(
             themeData: appThemeData[getAppTheme()]!, locale: getLocale())) {
-    on<ThemeChanged>(_onThemeChanged);
-    on<LocalChanged>(_onLocalChanged);
+    on<ThemeChangedEvent>(_onThemeChanged);
+    on<LocalChangedEvent>(_onLocalChanged);
   }
 
   //change theme
-  _onThemeChanged(ThemeChanged event, Emitter<SettingsState> emit) {
+  _onThemeChanged(ThemeChangedEvent event, Emitter<SettingsState> emit) {
     String changedTheme = changeTheme(event.themeData);
     box.write(kThemeKey, changedTheme);
     emit(state.copyWith(
@@ -42,7 +42,7 @@ class SettingBloc extends Bloc<SettingEvent, SettingsState> {
   }
 
   //change locale
-  _onLocalChanged(LocalChanged event, Emitter<SettingsState> emit) {
+  _onLocalChanged(LocalChangedEvent event, Emitter<SettingsState> emit) {
     String changedLocale = changeLocale(event.locale);
 
     box.write(kLocaleKey, changedLocale);

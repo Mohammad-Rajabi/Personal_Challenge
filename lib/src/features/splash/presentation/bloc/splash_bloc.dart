@@ -4,10 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
   SplashBloc() : super(SplashState()) {
-    on<SplashNavigatedTo>(_onNavigate);
+    on<SplashNavigateToAuthScreenEvent>(_onNavigate);
   }
 
-  _onNavigate(SplashNavigatedTo event, Emitter<SplashState> emit) async {
-    emit(SplashNavigated());
+  _onNavigate(SplashNavigateToAuthScreenEvent event, Emitter<SplashState> emit) async {
+    emit(SplashNavigatedToAuthScreenState());
   }
 }

@@ -18,7 +18,6 @@ class _SettingsViewState extends State<SettingsView> {
   late ThemeData themeData;
   late AppLocalizations localizations;
 
-
   @override
   void didChangeDependencies() {
     themeData = Theme.of(context);
@@ -28,10 +27,8 @@ class _SettingsViewState extends State<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return BlocProvider.value(
-      value:RepositoryProvider.of<SettingBloc>(context),
+      value: RepositoryProvider.of<SettingBloc>(context),
       child: BlocBuilder<SettingBloc, SettingsState>(
         builder: (context, state) {
           return PopupMenuButton(
@@ -40,16 +37,15 @@ class _SettingsViewState extends State<SettingsView> {
                 color: themeData.iconTheme.color,
               ),
               onSelected: (String choice) {
-                if(choice == localizations.theme){
+                if (choice == localizations.theme) {
                   context
                       .read<SettingBloc>()
-                      .add(ThemeChanged(themeData: state.themeData));
-                }else{
+                      .add(ThemeChangedEvent(themeData: state.themeData));
+                } else {
                   context
                       .read<SettingBloc>()
-                      .add(LocalChanged(locale:state.locale));
+                      .add(LocalChangedEvent(locale: state.locale));
                 }
-
               },
               itemBuilder: (BuildContext context) {
                 return [
@@ -58,11 +54,17 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(localizations.theme,style: themeData.textTheme.subtitle2,),
+                        Text(
+                          localizations.theme,
+                          style: themeData.textTheme.subtitle2,
+                        ),
                         const SizedBox(
                           width: 16,
                         ),
-                        Text(checkTheme(state),style: themeData.textTheme.bodyText2,),
+                        Text(
+                          checkTheme(state),
+                          style: themeData.textTheme.bodyText2,
+                        ),
                       ],
                     ),
                   ),
@@ -71,11 +73,17 @@ class _SettingsViewState extends State<SettingsView> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(localizations.language,style: themeData.textTheme.subtitle2,),
+                        Text(
+                          localizations.language,
+                          style: themeData.textTheme.subtitle2,
+                        ),
                         const SizedBox(
                           width: 16,
                         ),
-                        Text(checkLanguage(state),style: themeData.textTheme.bodyText2,),
+                        Text(
+                          checkLanguage(state),
+                          style: themeData.textTheme.bodyText2,
+                        ),
                       ],
                     ),
                   ),

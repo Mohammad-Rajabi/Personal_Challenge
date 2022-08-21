@@ -5,22 +5,22 @@ abstract class DashboardEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class DashboardStarted extends DashboardEvent {}
+class DashboardStartedEvent extends DashboardEvent {}
 
-class DashboardRetry extends DashboardEvent {}
+class DashboardRetryEvent extends DashboardEvent {}
 
-class DashboardScrolled extends DashboardEvent {}
+class DashboardScrolledEvent extends DashboardEvent {}
 
-class DashboardCoinsFetchMore extends DashboardEvent {
+class DashboardCoinsFetchMoreEvent extends DashboardEvent {
   bool hasReachedMax;
   int currentPage;
   bool isCoinsFetching;
 
-  DashboardCoinsFetchMore({required this.hasReachedMax,required this.currentPage,required this.isCoinsFetching});
+  DashboardCoinsFetchMoreEvent({required this.hasReachedMax,required this.currentPage,required this.isCoinsFetching});
 }
 
-class DashboardOnCoinClicked extends DashboardEvent{
+class DashboardOnCoinClickedEvent extends DashboardEvent{
 String url;
-  DashboardOnCoinClicked({required this.url});
+  DashboardOnCoinClickedEvent({required this.url});
 }
 

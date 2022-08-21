@@ -26,7 +26,7 @@ class SplashScreen extends StatelessWidget {
       create: (context) => RepositoryProvider.of<SplashBloc>(context),
       child: BlocConsumer<SplashBloc, SplashState>(
         listener: (context, state) {
-          if (state is SplashNavigated) {
+          if (state is SplashNavigatedToAuthScreenState) {
             Navigator.pushReplacement(
                 context,
                 AppRoutes.generateRoute(
@@ -73,7 +73,7 @@ class SplashScreen extends StatelessWidget {
               alignment: AlignmentDirectional.bottomStart,
               child: TextButton(
                 onPressed: () {
-                  context.read<SplashBloc>().add(SplashNavigatedTo());
+                  context.read<SplashBloc>().add(SplashNavigateToAuthScreenEvent());
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

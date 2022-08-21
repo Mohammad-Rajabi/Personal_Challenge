@@ -1,41 +1,49 @@
 part of 'users_list_bloc.dart';
 
-abstract class UsersListState extends Equatable{
-
+abstract class UsersListState extends Equatable {
   @override
-  List<Object> get props=>[];
+  List<Object> get props => [];
 }
 
-class UsersListLoading extends UsersListState {}
+class UsersListLoadingState extends UsersListState {}
 
-class UsersListSuccess extends UsersListState {
-  UsersListApiResponse data;
+class UsersListSuccessState extends UsersListState {
+  List<UserModel> users;
   bool hasReachedMax;
   bool isUsersFetching;
+  int currentPage;
 
-  UsersListSuccess({required this.data,this.hasReachedMax = false,this.isUsersFetching=false});
+  UsersListSuccessState(
+      {required this.users,
+      required this.currentPage,
+      this.hasReachedMax = false,
+      this.isUsersFetching = false});
 
-  UsersListSuccess copyWith({
-    UsersListApiResponse? data,
-    bool? hasReachedMax
-  }) {
-    return UsersListSuccess(
-      data: data ?? this.data,
-      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
-    );
+  UsersListSuccessState copyWith(
+      {List<UserModel>? users,
+      bool? hasReachedMax,
+      bool? isUsersFetching,
+      int? currentPage}) {
+    return UsersListSuccessState(
+        users: users ?? this.users,
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+        isUsersFetching: isUsersFetching ?? this.isUsersFetching,
+        currentPage: currentPage ?? this.currentPage);
   }
+
   @override
-  List<Object> get props=>[data,hasReachedMax];
+  List<Object> get props => [users, hasReachedMax, isUsersFetching];
 }
 
+class UsersListNoInternetState extends UsersListState {}
 
-class UsersListNoInternet extends UsersListState {}
+class UsersListFailureState extends UsersListState {}
 
-class UsersListFailure extends UsersListState {}
+class UsersListNavigatedToUserProfileScreenState extends UsersListState {
+  UserModel user;
 
-class UsersListNavigatedToUserProfileScreen extends UsersListState {
-UserModel user;
-  UsersListNavigatedToUserProfileScreen({required this.user});
-@override
-List<Object> get props=>[user];
+  UsersListNavigatedToUserProfileScreenState({required this.user});
+
+  @override
+  List<Object> get props => [user];
 }

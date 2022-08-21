@@ -7,7 +7,7 @@ abstract class AuthState extends Equatable {
   List<Object?> get props => [];
 }
 
-class AuthInitial extends AuthState {
+class AuthInitialState extends AuthState {
   late AuthStateMode authStateMode;
   late bool isPasswordObscure;
   late bool isConfirmationPasswordObscure;
@@ -15,7 +15,7 @@ class AuthInitial extends AuthState {
   late bool isRulesAccepted;
   late bool rememberMe;
 
-  AuthInitial(
+  AuthInitialState(
       {AuthStateMode authStateMode = AuthStateMode.register,
       bool isLoading = false,
       bool isPasswordObscure = true,
@@ -30,14 +30,14 @@ class AuthInitial extends AuthState {
     this.rememberMe = rememberMe;
   }
 
-  AuthInitial copyWith(
+  AuthInitialState copyWith(
       {AuthStateMode? authStateMode,
       bool? isLoading,
       bool? isPasswordObscure,
       bool? isConfirmationPasswordObscure,
       bool? isRulesAccepted,
       bool? rememberMe}) {
-    return AuthInitial(
+    return AuthInitialState(
       authStateMode: authStateMode ?? this.authStateMode,
       isLoading: isLoading ?? this.isLoading,
       isPasswordObscure: isPasswordObscure ?? this.isPasswordObscure,
@@ -59,16 +59,16 @@ class AuthInitial extends AuthState {
       ];
 }
 
-class AuthNavigatedTo extends AuthState {}
+class AuthNavigatedToMainScreenState extends AuthState {}
 
-class AuthSuccess extends AuthState {}
+class AuthSuccessState extends AuthState {}
 
-class AuthNoInternet extends AuthState {}
+class AuthNoInternetState extends AuthState {}
 
-class AuthFailure extends AuthState {
+class AuthFailureState extends AuthState {
   String message;
 
-  AuthFailure({required this.message});
+  AuthFailureState({required this.message});
 }
 
-class AuthNoRulesAccepted extends AuthState {}
+class AutRulesNotAcceptedState extends AuthState {}
