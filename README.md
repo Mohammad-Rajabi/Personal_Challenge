@@ -1,4 +1,4 @@
-## Finnogate Challenge | Flutter
+## Personal Challenge | Flutter
 
 
 Create navigation like Instagram app navigation
