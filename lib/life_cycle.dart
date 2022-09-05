@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 
 class LifeCycle extends StatefulWidget {
   Widget child;
-   LifeCycle({Key? key,required this.child}) : super(key: key);
+
+  LifeCycle({Key? key, required this.child}) : super(key: key);
 
   @override
   State<LifeCycle> createState() => _LifeCycleState();
 }
 
-class _LifeCycleState extends State<LifeCycle> with WidgetsBindingObserver{
-
-
-
+class _LifeCycleState extends State<LifeCycle> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return widget.child;
@@ -31,6 +29,8 @@ class _LifeCycleState extends State<LifeCycle> with WidgetsBindingObserver{
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-
+    super.didChangeAppLifecycleState(state);
   }
+
+
 }

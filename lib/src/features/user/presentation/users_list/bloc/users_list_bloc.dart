@@ -13,7 +13,7 @@ class UsersListBloc extends Bloc<UsersListEvent, UsersListState> {
   RemoteUserDataSource _remoteUserDataSource;
   int currentPage = 1;
   late List<UserModel> users;
-  bool isPreviousRendered = false;
+  bool keepAlive = false;
    double usersListScrollOffset = 0;
 
   UsersListBloc({required RemoteUserDataSource remoteUserDataSource})
@@ -27,8 +27,8 @@ class UsersListBloc extends Bloc<UsersListEvent, UsersListState> {
   }
 
   _onStarted(UsersListStartedEvent event, Emitter<UsersListState> emit) async {
-    if (!isPreviousRendered) {
-      isPreviousRendered= true;
+    if (!keepAlive) {
+      keepAlive= true;
       try {
         final usersListApiResponse =
             await _remoteUserDataSource.getUsers(currentPage);

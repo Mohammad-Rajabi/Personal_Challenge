@@ -6,12 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainScreen extends StatefulWidget {
-  final int kDashboardScreenIndex = 0;
-  final int kUsersListScreenIndex = 1;
-
-  final GlobalKey<NavigatorState> dashboardScreenKey = GlobalKey();
-  final GlobalKey<NavigatorState> usersListScreenKey = GlobalKey();
-
   MainScreen({Key? key}) : super(key: key);
 
   @override
@@ -19,32 +13,35 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  final int kDashboardScreenIndex = 1;
+  final int kUsersListScreenIndex = 0;
+
+  final GlobalKey<NavigatorState> dashboardScreenKey = GlobalKey();
+  final GlobalKey<NavigatorState> usersListScreenKey = GlobalKey();
+
   late int _currentScreenIndex;
   late final _indexToKeyMap;
   late ThemeData themeData;
   late AppLocalizations localizations;
+  final Set<int> _screensHistory = {};
 
   @override
   void initState() {
-    _currentScreenIndex = widget.kUsersListScreenIndex;
+    super.initState();
+    _currentScreenIndex = kUsersListScreenIndex;
 
     _indexToKeyMap = {
-      widget.kDashboardScreenIndex: widget.dashboardScreenKey,
-      widget.kUsersListScreenIndex: widget.usersListScreenKey
+      kDashboardScreenIndex: dashboardScreenKey,
+      kUsersListScreenIndex: usersListScreenKey
     };
-    super.initState();
   }
 
-  final Set<int> _screensHistory = {};
-
   Future<bool> _onWillPop() async {
-    var currentNavigatorState =
-        _indexToKeyMap[_currentScreenIndex]!.currentState;
+    var currentNavigatorState = _indexToKeyMap[_currentScreenIndex]!.currentState;
     if (currentNavigatorState!.canPop()) {
       currentNavigatorState.pop();
       return false;
-    }
-    if (_screensHistory.isNotEmpty) {
+    } else if (_screensHistory.isNotEmpty) {
       setState(() {
         _currentScreenIndex = _screensHistory.last;
         _screensHistory.remove(_screensHistory.last);
@@ -55,7 +52,6 @@ class _MainScreenState extends State<MainScreen> {
     }
   }
 
-
   @override
   void didChangeDependencies() {
     themeData = Theme.of(context);
@@ -65,8 +61,6 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -74,15 +68,15 @@ class _MainScreenState extends State<MainScreen> {
           index: _currentScreenIndex,
           children: [
             _navigator(
-                key: widget.dashboardScreenKey,
-                routeName: kDashboardScreenRoute,
-                screenIndex: widget.kDashboardScreenIndex,
+                key: usersListScreenKey,
+                routeName: kUsersListScreenRoute,
+                screenIndex: kUsersListScreenIndex,
                 currentIndex: _currentScreenIndex),
             _navigator(
-                key: widget.usersListScreenKey,
-                routeName: kUsersListScreenRoute,
-                screenIndex: widget.kUsersListScreenIndex,
-                currentIndex: _currentScreenIndex)
+                key: dashboardScreenKey,
+                routeName: kDashboardScreenRoute,
+                screenIndex: kDashboardScreenIndex,
+                currentIndex: _currentScreenIndex),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -91,14 +85,14 @@ class _MainScreenState extends State<MainScreen> {
           items: [
             BottomNavigationBarItem(
                 icon: const Icon(
+                  CupertinoIcons.person_2,
+                ),
+                label: localizations.users_list),
+            BottomNavigationBarItem(
+                icon: const Icon(
                   CupertinoIcons.home,
                 ),
                 label: localizations.dashboard),
-            BottomNavigationBarItem(
-                icon: const Icon(
-                  CupertinoIcons.person_2,
-                ),
-                label: localizations.users_list)
           ],
           onTap: (selectedScreenIndex) {
             setState(() {

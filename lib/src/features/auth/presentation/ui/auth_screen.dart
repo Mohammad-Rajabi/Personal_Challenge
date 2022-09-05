@@ -115,7 +115,6 @@ class _LoginStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthState state = context.read<AuthBloc>().state;
-
     return SizedBox.expand(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
