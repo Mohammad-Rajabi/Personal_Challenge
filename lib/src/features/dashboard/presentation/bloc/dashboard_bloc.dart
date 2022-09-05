@@ -14,6 +14,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   int currentPage = 1;
   final int perPage = 15;
   late List<CoinModel> coins;
+  bool keepAlive = false;
 
   DashboardBloc({required RemoteCoinsDataSource remoteCoinsDataSource})
       : _remoteCoinsDataSource = remoteCoinsDataSource,
@@ -25,22 +26,24 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
   }
 
   _onStarted(DashboardStartedEvent event, Emitter<DashboardState> emit) async {
-    try {
-      final coinsResponse = await _remoteCoinsDataSource.getCoins(
-          page: currentPage, perPage: perPage);
-      coins = List.from(coinsResponse, growable: true);
-      emit(DashboardSuccessState(
-          coins: List.from(coinsResponse, growable: true),
-          currentPage: currentPage));
-    } on DioError catch (dioError) {
-      if (dioError.type == DioErrorType.other &&
-          dioError.error is NoInternetException) {
-        emit(DashboardNoInternetState());
-      } else {
+    if (!keepAlive) {
+      keepAlive = true;
+      try {
+        final coinsResponse =
+            await _remoteCoinsDataSource.getCoins(page: currentPage, perPage: perPage);
+        coins = List.from(coinsResponse, growable: true);
+        emit(DashboardSuccessState(
+            coins: List.from(coinsResponse, growable: true), currentPage: currentPage));
+      } on DioError catch (dioError) {
+        if (dioError.type == DioErrorType.other &&
+            dioError.error is NoInternetException) {
+          emit(DashboardNoInternetState());
+        } else {
+          emit(DashboardFailureState());
+        }
+      } catch (e) {
         emit(DashboardFailureState());
       }
-    } catch (e) {
-      emit(DashboardFailureState());
     }
   }
 
@@ -56,8 +59,8 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
       currentPage = event.currentPage + 1;
 
-      final coins = await _remoteCoinsDataSource.getCoins(
-          page: currentPage, perPage: perPage);
+      final coins =
+          await _remoteCoinsDataSource.getCoins(page: currentPage, perPage: perPage);
 
       this.coins.addAll(coins);
 
@@ -66,8 +69,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
     }
   }
 
-  _onCoinClicked(
-      DashboardOnCoinClickedEvent event, Emitter<DashboardState> emit) {
+  _onCoinClicked(DashboardOnCoinClickedEvent event, Emitter<DashboardState> emit) {
     emit(DashboardNavigatedToWebViewScreenState(url: event.url));
   }
 }

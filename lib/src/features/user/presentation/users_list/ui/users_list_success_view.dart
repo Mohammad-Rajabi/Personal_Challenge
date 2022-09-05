@@ -17,8 +17,6 @@ class UsersListSuccessView extends StatefulWidget {
 }
 
 class UsersListSuccessViewState extends State<UsersListSuccessView> {
-  double itemExtent = 150;
-
   late UsersListSuccessState state;
 
   final ScrollController _listScrollController = ScrollController();
@@ -26,11 +24,14 @@ class UsersListSuccessViewState extends State<UsersListSuccessView> {
   @override
   void initState() {
     super.initState();
-
     _listScrollController.addListener(_onScroll);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _listScrollController
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+
+      _listScrollController
         .animateTo(context.read<UsersListBloc>().usersListScrollOffset,
-            duration: const Duration(milliseconds: 10), curve: Curves.elasticIn));
+            duration: const Duration(milliseconds: 10), curve: Curves.elasticIn);
+    });
+
   }
 
   void _onScroll() {
@@ -50,8 +51,7 @@ class UsersListSuccessViewState extends State<UsersListSuccessView> {
   Widget build(BuildContext context) {
     state = (context.read<UsersListBloc>().state) as UsersListSuccessState;
 
-    return SizedBox(
-      height: itemExtent * state.users.length,
+    return SizedBox.expand(
       child: ListView.builder(
           itemCount:
               state.hasReachedMax ? state.users.length : state.users.length + 1,
