@@ -1,4 +1,4 @@
-## Finnogate Challenge | Flutter
+## Personal Challenge | Flutter
 
 
 Create navigation like Instagram app navigation
@@ -10,6 +10,7 @@ Technologies that are used in this projects are:
 
     Flutter
     Flutter Bloc
+    Clean Architecture
     Dependency Injection
     Webview
     
